@@ -61,6 +61,11 @@
  */
 
 // ▼ EDITAR ESTAS DOS LÍNEAS CON TUS CREDENCIALES ▼
-const SUPABASE_URL      = '';  // Ej: 'https://abcxyz123.supabase.co'
-const SUPABASE_ANON_KEY = '';  // Ej: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+const SUPABASE_URL      = 'https://ynkexabletqnbxsvrgjv.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlua2V4YWJsZXRxbmJ4c3ZyZ2p2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzNjk2NTIsImV4cCI6MjA5Nzk0NTY1Mn0.8-nAG8_jZVYCQN7wjUxKJ4ANRLL0fbrKIcvrcDOT8-Q';
 // ▲ EDITAR ESTAS DOS LÍNEAS CON TUS CREDENCIALES ▲
+
+/*
+--11250
+--600 6262 886  bruno Frits
+*/
