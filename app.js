@@ -595,16 +595,6 @@ function renderTransactions() {
             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
           </svg>
         </button>
-        <button class="btn-delete" data-id="${t.id}" title="Eliminar transacción"
-                aria-label="Eliminar ${escHtml(t.description)}">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
-            <polyline points="3 6 5 6 21 6"/>
-            <path d="M19 6l-1 14H6L5 6"/>
-            <path d="M10 11v6M14 11v6"/>
-            <path d="M9 6V4h6v2"/>
-          </svg>
-        </button>
       </td>
     </tr>
   `).join('');
@@ -945,6 +935,10 @@ function openModal() {
   if (saveBtnText) saveBtnText.textContent = 'Guardar';
   if (error) error.hidden = true;
 
+  // Ocultar botón eliminar (solo visible en modo edición)
+  const deleteBtn = document.getElementById('deleteModalBtn');
+  if (deleteBtn) deleteBtn.hidden = true;
+
   modal.showModal();
   document.getElementById('fDescription')?.focus();
 }
@@ -996,6 +990,13 @@ function openEditModal(id) {
   setTextSafe('modalTitle', 'Editar transacción');
   const saveBtnText = document.querySelector('#saveModalBtn .btn-text');
   if (saveBtnText) saveBtnText.textContent = 'Actualizar';
+
+  // Mostrar botón eliminar con el ID de esta transacción
+  const deleteBtn = document.getElementById('deleteModalBtn');
+  if (deleteBtn) {
+    deleteBtn.hidden = false;
+    deleteBtn.dataset.id = id;
+  }
 
   modal.showModal();
   fDesc?.focus();
@@ -1729,6 +1730,13 @@ function setupEventListeners() {
   document.getElementById('closeModalBtn') ?.addEventListener('click', closeModal);
   document.getElementById('cancelModalBtn')?.addEventListener('click', closeModal);
   document.getElementById('txnForm')       ?.addEventListener('submit', handleFormSubmit);
+
+  document.getElementById('deleteModalBtn')?.addEventListener('click', async function() {
+    const id = this.dataset.id;
+    if (!id) return;
+    closeModal();
+    await handleDelete(id);
+  });
 
   document.getElementById('fDateButton')?.addEventListener('click', toggleDateCalendar);
   document.getElementById('datePrevMonth')?.addEventListener('click', () => shiftCalendarMonth(-1));
