@@ -36,6 +36,9 @@ const CHART_COLORS = [
   '#6FA8C9', '#B98ABF', '#9CA3AF', '#E0B354',
 ];
 
+/** Clave de localStorage para el tema elegido por el usuario */
+const THEME_KEY = 'finanzas-theme';
+
 /* ============================================================
    ESTADO DE LA APLICACIÓN
    ============================================================ */
@@ -1555,13 +1558,6 @@ async function handleLogout() {
   showToast('Sesión cerrada', 'success');
 }
 
-/**
- * Activa el modo offline (sin cuenta).
- */
-function handleOfflineMode() {
-  handleLoginSuccess(null, false);
-}
-
 /** Valida email y password en los formularios de auth */
 function validateAuthForm(email, password, errorEl) {
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -1677,6 +1673,64 @@ function escHtml(str) {
    ============================================================ */
 
 /** Registra todos los event listeners de la app */
+/* ============================================================
+   TEMA (CLARO / OSCURO)
+   ============================================================ */
+
+/**
+ * Devuelve el tema activo actualmente ('light' | 'dark').
+ * @returns {string}
+ */
+function getCurrentTheme() {
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+}
+
+/**
+ * Aplica un tema: actualiza el atributo data-theme, la UI del switch,
+ * el color de la barra del navegador y persiste la elección.
+ * @param {string} theme - 'light' | 'dark'
+ * @param {boolean} persist - si se debe guardar en localStorage
+ * @param {boolean} rerenderCharts - si se deben redibujar los gráficos de la vista actual
+ */
+function setTheme(theme, persist = true, rerenderCharts = true) {
+  const isDark = theme === 'dark';
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+
+  const btn = document.getElementById('themeToggleBtn');
+  if (btn) btn.setAttribute('aria-checked', String(isDark));
+
+  const label = document.getElementById('themeToggleLabel');
+  if (label) label.textContent = isDark ? 'Modo oscuro' : 'Modo claro';
+
+  const metaTheme = document.getElementById('metaThemeColor');
+  if (metaTheme) metaTheme.setAttribute('content', isDark ? '#16151A' : '#F5F1E8');
+
+  if (persist) {
+    try { localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light'); } catch { /* ignorar */ }
+  }
+
+  // Redibujar gráficos de la vista actual para que tomen los nuevos colores
+  if (rerenderCharts && state.isLoggedIn) {
+    if (state.currentView === 'dashboard')    renderDashboard();
+    if (state.currentView === 'transactions') renderTransactions();
+    if (state.currentView === 'reports')      renderReports();
+  }
+}
+
+/** Alterna entre tema claro y oscuro. */
+function toggleTheme() {
+  setTheme(getCurrentTheme() === 'dark' ? 'light' : 'dark');
+}
+
+/**
+ * Sincroniza el switch de tema con el atributo data-theme ya aplicado
+ * (fue definido tempranamente en el <head> para evitar parpadeo).
+ * No redibuja gráficos porque aún no hay datos cargados en este punto.
+ */
+function initTheme() {
+  setTheme(getCurrentTheme(), false, false);
+}
+
 function setupEventListeners() {
 
   /* ── AUTENTICACIÓN ─────────────────────────────────────── */
@@ -1686,11 +1740,12 @@ function setupEventListeners() {
   document.getElementById('registerForm')
     ?.addEventListener('submit', handleRegister);
 
-  document.getElementById('offlineBtn')
-    ?.addEventListener('click', handleOfflineMode);
-
   document.getElementById('logoutBtn')
     ?.addEventListener('click', handleLogout);
+
+  // Selector de tema (claro/oscuro)
+  document.getElementById('themeToggleBtn')
+    ?.addEventListener('click', toggleTheme);
 
   document.getElementById('bottomLogoutBtn')
     ?.addEventListener('click', handleLogout);
@@ -1901,6 +1956,9 @@ async function init() {
   });
   setTextSafe('dashPeriodLabel', fmtMonthLabel(now));
   setTextSafe('rptPeriodLabel',  fmtMonthLabel(now));
+
+  // Sincronizar el switch de tema con el tema ya aplicado (evita parpadeo)
+  initTheme();
 
   // Registrar event listeners
   setupEventListeners();

@@ -4,8 +4,21 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="description" content="Gestión de finanzas personales — controla tus ingresos y gastos mensuales con reportes detallados." />
-    <meta name="theme-color" content="#F5F1E8" />
+    <meta name="theme-color" content="#F5F1E8" id="metaThemeColor" />
     <title>FinanzasApp — Control Personal</title>
+
+    <!-- Aplica el tema guardado ANTES de pintar la página (evita parpadeo) -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('finanzas-theme');
+          var theme = saved === 'dark' || saved === 'light'
+            ? saved
+            : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) { /* localStorage no disponible: se mantiene 'light' */ }
+      })();
+    </script>
 
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -69,10 +82,7 @@
                 <span class="btn-text">Iniciar sesión</span>
                 <span class="btn-spinner" aria-hidden="true" hidden></span>
               </button>
-              <div class="auth-divider" aria-hidden="true"><span>o</span></div>
-              <button type="button" class="btn-ghost btn-full" id="offlineBtn">
-                Continuar sin cuenta (modo offline)
-              </button>
+
             </form>
           </div>
 
@@ -169,12 +179,56 @@
           </button>
         </nav>
 
+        <!-- Selector de tema (claro / oscuro) -->
+        <div class="theme-toggle-row">
+          <span class="theme-toggle-icon icon-sun" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4"/>
+              <line x1="12" y1="2" x2="12" y2="4"/>
+              <line x1="12" y1="20" x2="12" y2="22"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="2" y1="12" x2="4" y2="12"/>
+              <line x1="20" y1="12" x2="22" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+          </span>
+          <span class="theme-toggle-label" id="themeToggleLabel">Modo claro</span>
+          <button type="button" class="theme-switch" id="themeToggleBtn" role="switch"
+                  aria-checked="false" aria-label="Cambiar entre modo claro y oscuro">
+            <span class="theme-switch-thumb" aria-hidden="true">
+              <svg class="thumb-icon icon-sun" width="10" height="10" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="4"/>
+                <line x1="12" y1="2" x2="12" y2="4"/>
+                <line x1="12" y1="20" x2="12" y2="22"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="2" y1="12" x2="4" y2="12"/>
+                <line x1="20" y1="12" x2="22" y2="12"/>
+              </svg>
+              <svg class="thumb-icon icon-moon" width="10" height="10" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+              </svg>
+            </span>
+          </button>
+          <span class="theme-toggle-icon icon-moon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+            </svg>
+          </span>
+        </div>
+
         <div class="sidebar-footer">
           <div class="user-pill" id="userPill">
             <div class="user-avatar" id="userAvatar" aria-hidden="true">U</div>
             <div class="user-meta">
               <span class="user-name" id="userName">Usuario</span>
-              <span class="user-badge" id="userBadge">Offline</span>
+              <span class="user-badge" id="userBadge">● Online</span>
             </div>
           </div>
           <button class="btn-icon sidebar-logout" id="logoutBtn" title="Cerrar sesión"

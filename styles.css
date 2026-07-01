@@ -79,6 +79,75 @@
   --cat-11: #9B6B00;  /* dorado oscuro */
 }
 
+/* ── TEMA OSCURO ──────────────────────────────────────────
+   Se activa colocando data-theme="dark" en <html>.
+   Mantiene el mismo acento cálido (terracota) sobre una
+   base de grises azulados oscuros para buen contraste WCAG AA.
+   ========================================================= */
+html[data-theme="dark"] {
+  /* Fondos */
+  --bg:          #16151A;
+  --bg-surface:  #1C1B22;
+  --bg-card:     #211F27;
+  --bg-card-hov: #27252E;
+  --bg-elevated: #2A2833;
+  --bg-input:    #211F27;
+
+  /* Bordes */
+  --border:      #322F3B;
+  --border-hov:  #423E4D;
+  --border-acc:  rgba(224, 164, 118, 0.35);
+
+  /* Acento — terracota aclarado para contraste sobre fondo oscuro */
+  --accent:      #E0A476;
+  --accent-dark: #C98A5C;
+  --accent-glow: rgba(224, 164, 118, 0.22);
+  --accent-bg:   rgba(224, 164, 118, 0.14);
+
+  /* Semánticos — aclarados para AA sobre fondo oscuro */
+  --income:      #4FBF92;
+  --income-bg:   rgba(79, 191, 146, 0.14);
+  --income-glow: rgba(79, 191, 146, 0.22);
+  --expense:     #E27D82;
+  --expense-bg:  rgba(226, 125, 130, 0.14);
+  --expense-glow:rgba(226, 125, 130, 0.22);
+  --balance-pos: #6FA8D8;
+  --balance-neg: #E27D82;
+  --warning:     #E0B34D;
+  --savings:     #B199D9;
+
+  /* Texto */
+  --text-1:   #F2EFEA;
+  --text-2:   #ABA5B4;
+  --text-3:   #726D7D;
+  --text-acc: #E0A476;
+
+  /* Sombras */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.28);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.34);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.40);
+  --glow-acc:  0 0 20px rgba(224, 164, 118, 0.20);
+
+  /* Colores de categorías — versiones aclaradas para fondo oscuro */
+  --cat-0:  #E0A05A;
+  --cat-1:  #6FA8D8;
+  --cat-2:  #B199D9;
+  --cat-3:  #4FC9B5;
+  --cat-4:  #E082A8;
+  --cat-5:  #E27D82;
+  --cat-6:  #4FBF92;
+  --cat-7:  #E0955A;
+  --cat-8:  #8C9FE0;
+  --cat-9:  #9BCB4A;
+  --cat-10: #A6ACC0;
+  --cat-11: #E0C24D;
+}
+
+/* Transición suave al cambiar de tema (evita "salto" brusco de colores) */
+body, .sidebar, .app-main, .metric-card, .bg-card, [class*="card"] {
+  transition: background-color var(--dur-slow) var(--ease), border-color var(--dur-slow) var(--ease), color var(--dur-slow) var(--ease);
+}
+
 /* ── RESET ────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -658,6 +727,83 @@ input[type="month"]::-webkit-calendar-picker-indicator {
   border-radius: 0 2px 2px 0;
 }
 .nav-icon { flex-shrink: 0; }
+
+/* ── SELECTOR DE TEMA (claro / oscuro) ──────────────────── */
+.theme-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  margin-top: 4px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.theme-toggle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-3);
+  transition: color var(--dur-base) var(--ease);
+}
+.theme-toggle-icon.icon-sun { color: var(--accent); }
+html[data-theme="dark"] .theme-toggle-icon.icon-moon { color: var(--accent); }
+html[data-theme="dark"] .theme-toggle-icon.icon-sun { color: var(--text-3); }
+
+.theme-toggle-label {
+  flex: 1;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Switch (toggle) */
+.theme-switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 42px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: var(--bg-elevated);
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease);
+}
+.theme-switch:hover { border-color: var(--border-hov); }
+.theme-switch:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.theme-switch[aria-checked="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.theme-switch-thumb {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  transition: transform var(--dur-base) var(--ease), background var(--dur-base) var(--ease), color var(--dur-base) var(--ease);
+}
+.theme-switch[aria-checked="true"] .theme-switch-thumb {
+  transform: translateX(18px);
+  background: #FFFFFF;
+  color: var(--accent-dark);
+}
+.thumb-icon { flex-shrink: 0; }
+.thumb-icon.icon-moon { display: none; }
+.theme-switch[aria-checked="true"] .thumb-icon.icon-sun { display: none; }
+.theme-switch[aria-checked="true"] .thumb-icon.icon-moon { display: block; }
 
 /* Sidebar footer */
 .sidebar-footer {
